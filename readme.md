@@ -82,4 +82,17 @@ var a:number | null | undefined  = 1; a = null // 不报错
 
 ## vite构建工具
 
+一、 创建一个vite项目
+
+```cmd
+  yarn create vite   #默认创建
+  yarn create vite app_name --template vue   #指定项目名称和项目类型（vue、vue-ts、react等）
+
+  cd app_name  #进入根目录
+  npm install  #安装依赖
+  npm run dev | npx vite | npx vite --port 8080 指定启动app的端口  #运行app  
+```
+
 ## vue3
+
+### tsconfig.json 相关配置
