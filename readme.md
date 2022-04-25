@@ -1,10 +1,10 @@
 # typescript + vite + vue3 构建一个标准化前端项目
-  
+
 ## typescript 相关基础
 
 一、基础数据类型
 
-``` js
+```js
 // string  字符串类型  
 var str:string = 'hello word'
 // number  数字类型  
@@ -32,13 +32,13 @@ var arr:Array<string> =  ["a",'b',"c"]
   var arr:[string,number] = ["a",1]
 ```
 
-四、枚举类型  enum  用于定义数值集合  
+四、枚举类型  enum  用于定义数值集合
 
 ```js
 enum Sex = {Male,female} let m:Sex = Sex.Male console.log(m) // 0 返回下标
 enum Color = {Red=1,yellow=3,green}; var g:Color = Color.green; console.log(g) //4
 ```
-  
+
 五、any类型  表示任意值
 
 ```js
@@ -66,18 +66,18 @@ var a:number | null | undefined  = 1; a = null // 不报错
 八、never 类型 包括（null和undefined）的子类型；表示不会出现的值 ；表示声明never类型的变量只能被never类型所赋值。在函数中通
 常表现为抛出异常或无法执行到终点（如无限循环）
 
- ```js
- var a:never; 
-  var b:number; 
-  a = 123 // 报错  
-  a = (()=> {throw new Error('error')})() // 运行正常
-  b = (()=>{throw new Error('error')})() // 运行正常  never 类型是任何类型的子类型
-  function error(msg:string):never{
-    throw new Error('error:',msg)
-  }
-  function loop():never {
-    while(true){}
-  }
+```js
+var a:never; 
+ var b:number; 
+ a = 123 // 报错  
+ a = (()=> {throw new Error('error')})() // 运行正常
+ b = (()=>{throw new Error('error')})() // 运行正常  never 类型是任何类型的子类型
+ function error(msg:string):never{
+   throw new Error('error:',msg)
+ }
+ function loop():never {
+   while(true){}
+ }
 ```
 
 ## vite构建工具
@@ -93,6 +93,130 @@ var a:number | null | undefined  = 1; a = null // 不报错
   npm run dev | npx vite | npx vite --port 8080 指定启动app的端口  #运行app  
 ```
 
-## vue3
+## vue3.0
 
-### tsconfig.json 相关配置
+### 一、vue3.0 和 vue2.0区别
+
+- 使用Api 有区别
+  - vue2.0: 只能使用Options Api  ( 以“组件实例”的概念为中心（this指向实例）)
+  - vue3.0: 可以使用Options API和Composition API  (核心是直接在函数范围内声明反应状态变量，并将来自多个函数的状态组合在一起以处理复杂性)
+- 生命周期 有区别
+  - vue2.0: beforeCreate->Created->beforeMount->onMounted->beforeUpdate->updated->beforeDestroy->Destroyed
+  - vue3.0: beforeCreate->Created->beforeMount->onMounted->beforeUpdate->updated->beforeUnMount->unMounted
+- 双向数据绑定原理 有区别
+  - vue2.0: 利用Object.defineProperty()对数据劫持结合发布者订阅模式实现双向绑定
+  - vue3.0: 利用Es6的Proxy() Api 对数据代理
+
+### 二、构建一个基于 Composition API 的 vue3.0 实例
+
+```html
+  <!-- 模式一 -->
+  <script setup>
+    import {ref,reactive,onMounted} from "vue"
+    const a = ref(0)
+    const b = reactive({value:1})
+    onMounted(()=>{
+      console.log(a.value) // 0
+      console.log(b.value) // 1
+    })
+  </script>
+  <template>
+    <!-- 模板中自动展开 响应数据 -->
+    <h2>{{a}}</h2>
+    <h2>{{b.value}}</h2>
+  </template>
+
+    <!-- 模式二 -->
+  <script>
+    import {ref,reactive,onMounted} from "vue"
+    export default {
+      setup(){
+        const a = ref(0)
+        const b = reactive({value:1})
+        onMounted(()=>{
+          console.log(a.value,b.value)
+        })
+        return {a,b}
+      }
+    }
+  </script>
+  <template>
+    <!-- 模板中自动展开 响应数据 -->
+    <h2>{{a}}</h2>
+    <h2>{{b.value}}</h2>
+  </template>
+```
+
+### 三、vue3.0 基于 Composition API 的组件
+
+- 导入组件并使用
+
+  ```html
+    <!-- 父组件 -->
+    <script setup>
+      import ChildTemp from "./ChildTemp.vue"
+    </script>
+    <template>
+      <child-temp></child-temp>
+    </template>
+    <!-- 子组件 -->
+    <script setup>
+      import {ref} from "vue"
+      const a = ref('hello word!')
+    </script>
+    <template>
+      <!-- 模板中自动展开 响应数据 -->
+      <h3>{{a}}</h3>
+    </template>
+
+  ```
+
+- 组件传参（prop传参）
+  
+  ```html
+    <!-- 父组件 -->
+    <script setup>
+      import ChildTemp from "./ChildTemp.vue"
+      import {ref} from "vue"
+      const a = ref('hello word!')
+      const submit = function(data){
+        console.log(data)
+      }
+    </script>
+    <template>
+      <!-- 模板中自动展开 响应数据 -->
+      <child-temp :a="a" @submit="submit"></child-temp>
+    </template>
+    <!-- 子组件 -->
+    <script setup>
+      const props = defineProps(['a'])
+      console.log(props.a)
+      const emit = defineEmits('submit')
+    </script>
+    <template>
+      <!-- 模板中自动展开props -->
+      <h3>{{a}}</h3>
+      <button @click="emit('submit','我是子组件的数据')">提交数据</button>
+    </template>
+
+  ```
+  
+- 组件传参（slot传参,只能单向传递）
+
+  ```html
+    <!-- 父组件 -->
+    <script setup>
+      import ChildTemp from "./ChildTemp.vue"
+      import {ref} from "vue"
+      const a = ref('hello word!')
+    </script>
+    <template>
+      <!-- 模板中自动展开 响应数据 -->
+      <child-temp>{{a}}</child-temp>
+    </template>
+    <!-- 子组件 -->
+    <template>
+      <slot/>
+    </template>
+  ```
+

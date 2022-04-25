@@ -1,14 +1,23 @@
 <script setup lang="ts">
   import { ref } from "vue"
+  import img from "/src/assets/logo.png"
 
   defineProps<{ msg: string }>()
 
+
   const count = ref(0)
+  let a:number = 0
+  let deepa = ref(a)
+  setTimeout(()=>{
+  },1000)
+
 </script>
 
 <template>
   <div>
+    <img :src="img" alt="">
     <h1>{{ msg }}</h1>
+    <h2 @click="deepa++">{{ deepa }}</h2>
 
     <p>
       Recommended IDE setup:
