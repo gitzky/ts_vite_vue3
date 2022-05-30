@@ -152,6 +152,8 @@ var a:never;
 - 导入组件并使用
 
   ```html
+    <!-- 模式1 -->
+    
     <!-- 父组件 -->
     <script setup>
       import ChildTemp from "./ChildTemp.vue"
@@ -168,13 +170,178 @@ var a:never;
       <!-- 模板中自动展开 响应数据 -->
       <h3>{{a}}</h3>
     </template>
+    
+    <!-- 模式2 -->
+    
+    <!-- 父组件 -->
+    <script>
+      import ChildTemp from "./ChildTemp.vue"
+      export default{
+        components:{
+          ChildTemp
+        }
+      }
+    </script>
+    <template>
+      <child-temp></child-temp>
+    </template>
+    <!-- 子组件 -->
+    <script>
+      import {ref} from "vue"
+      const a = ref('hello word!')
+    </script>
+    <template>
+      <!-- 模板中自动展开 响应数据 -->
+      <h3>{{a}}</h3>
+    </template>
 
   ```
 
 - 组件传参（prop传参）
+  - script setup 模式
+
+    ```js
+      // props传参的方式：
+      // 数组式：
+      const props = defineProps(['a','b','c'])
+      // 对象式: 
+      const props = defineProps({a:String,b:Number,c:Array,d:Boolean})
+    ```
+
+  - script 模式
+
+    ```js
+    export default{
+      props:['a','b','c'],
+      props:{a:String,b:Number,c:Array,d:Boolean},
+      setup(props){
+        console.log(props.a)
+      }
+    }
+    ```
+  - typescript 模式
+
+    ``` html
+    <script setup lang="ts">
+      defineProps<{
+        a?:String,
+        b?:Number
+      }>()
+    </script>
+    ```
+  - props 传入校验
+    
+    ```js
+      defineProps({
+        a:String,
+        b:{
+          type:Number, // Srting,Number,Boolean,Array,Object,Date,Function,Symbol
+          require:true
+        },
+        c:{
+          type:Boolean,
+          require:true,
+          default:false
+        },
+        d:{
+          type:Object,
+          default(rawProps){
+            return {message:'hellow'}
+          }
+        },
+        e:{
+          validator(value){
+            return ['success','warning','danger'].includes(value)
+          }
+        },
+        f:[Srting,Boolean,Number]
+      })
+    ```
+- 组件传参（emit传参）
+
+  - script setup 模式
+
+  ```html
+    <!-- 子组件 -->
+    <script setup>
+      // 数组式
+      const emits = defineEmits(["submit"])
+      // 对象式
+      const emits = defineEmits({
+        submit(payload){
+          return true
+        }
+      })
+      // 触发
+      onMounted(){
+        emits('submit',1234)
+      }
+    </script>
+  ```
+  - script 模式
+
+  ```html
+    <!-- 子组件 -->
+    <script>
+      // 数组式
+      const emits = defineEmits(["submit"])
+     
+      export default{
+        setup(props,ctx){
+          ctx.emit('submit')
+        },
+        // 触发
+        onMounted(){
+          emits('submit',1234)
+        }
+      }
+      
+    </script>
+  ```
+  - typescript 模式
   
   ```html
-    <!-- 父组件 -->
+    <script setup lang="ts">
+      const emits = defineEmits<{
+        (e:'change',id:'number'):void
+        (e:'update',value:'string'):void
+      }>()
+    </script>
+
+  ```
+
+  - emit 传参校验
+  
+  ```html
+    <script setup>
+      const emits = defineEmits({
+        click:null, // no validation
+        submit:({email,password})=>{
+          if(email&&password){
+            return true
+          } else {
+            console.warning('Invalid submit event payload')
+            return false
+          }
+        }
+
+      })
+
+      const submitForm = function (email,password) {
+        emits('submit',{email,password })
+      }
+    </script>
+  ```
+
+- 组件传参（案例）
+  ```html
+
+    <template>
+      <!-- 模板中自动展开 响应数据 -->
+      <child-temp :a="a" @submit="submit"></child-temp>
+    </template>
+
+    <!-- 父组件 模式1 -->
     <script setup>
       import ChildTemp from "./ChildTemp.vue"
       import {ref} from "vue"
@@ -183,23 +350,116 @@ var a:never;
         console.log(data)
       }
     </script>
-    <template>
-      <!-- 模板中自动展开 响应数据 -->
-      <child-temp :a="a" @submit="submit"></child-temp>
-    </template>
-    <!-- 子组件 -->
-    <script setup>
-      const props = defineProps(['a'])
-      console.log(props.a)
-      const emit = defineEmits('submit')
+     <!-- 父组件 模式2 -->
+    <script>
+      import ChildTemp from "./ChildTemp.vue"
+      import {ref} from "vue"
+      export default{
+        components:{
+          ChildTemp
+        },
+        setup(){
+          const a = ref(123)\
+          const submit = function(params){
+            console.log(params)
+          }
+        }
+      }
     </script>
+    
+
     <template>
       <!-- 模板中自动展开props -->
       <h3>{{a}}</h3>
       <button @click="emit('submit','我是子组件的数据')">提交数据</button>
     </template>
 
+    <!-- 子组件 模式1 -->
+    <script setup>
+      const props = defineProps(['a'])
+      console.log(props.a)
+      const emit = defineEmits(['submit'])
+      onMounted(){
+
+      }
+    </script>
+    <!-- 子组件 模式2 -->
+    <script>
+      export default {
+        emits:['submit'],
+        setup(props,ctx){
+          ctx.emit('submit')
+        }
+      }
+    </script>
+
+
   ```
+  ```html
+  <!-- 模式1案例 -->
+  <script setup>
+    import {ref} from "vue";
+    const props = defineProps(["title"])
+    const emits = defineEmits(["submit"])
+    const a = ref(0)
+    onMounted:{
+      let timer = setInterval(()=>{
+        a.value++;
+        emits('submit',123)
+        if (a.value>=100) {
+          clearInterval(timer)
+        }
+      },1000)  
+    }
+  </script>	
+  <template>
+  <div>
+    {{a}}
+    <br/>
+    {{title}}
+    <br/>
+    <button @click="$emit('submit')">
+      按钮
+    </button>
+  </div>
+  </template>
+  
+  ```
+  ```html
+  <!-- 模式2案例 -->
+    <script>
+      import {ref} from "vue";
+      export default {
+        props:["title"],
+        emits:["submit"],
+        setup(props,ctx) {
+          let a = ref(0);
+          onMounted:{
+            let timer = setInterval(()=>{
+              a.value++;
+              ctx.emit('submit')
+              if (a.value>=100) {
+                clearInterval(timer)
+              }
+            },1000)
+          }
+          return {a}
+        },
+      }
+    </script>	
+
+    <template>
+      <div>
+        {{a}}
+        {{title}}
+        <button @click="$emit('submit')">
+          按钮
+        </button>
+      </div>
+    </template>
+  ```
+   
+
   
 - 组件传参（slot传参,只能单向传递）
 
@@ -219,4 +479,16 @@ var a:never;
       <slot/>
     </template>
   ```
+
+
+
+
+
+
+
+
+
+
+
+
 
