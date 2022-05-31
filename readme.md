@@ -219,6 +219,7 @@ var a:never;
       }
     }
     ```
+
   - typescript 模式
 
     ``` html
@@ -229,8 +230,9 @@ var a:never;
       }>()
     </script>
     ```
+
   - props 传入校验
-    
+
     ```js
       defineProps({
         a:String,
@@ -257,6 +259,7 @@ var a:never;
         f:[Srting,Boolean,Number]
       })
     ```
+
 - 组件传参（emit传参）
 
   - script setup 模式
@@ -278,6 +281,7 @@ var a:never;
       }
     </script>
   ```
+
   - script 模式
 
   ```html
@@ -298,6 +302,7 @@ var a:never;
       
     </script>
   ```
+
   - typescript 模式
   
   ```html
@@ -334,6 +339,7 @@ var a:never;
   ```
 
 - 组件传参（案例）
+
   ```html
 
     <template>
@@ -395,6 +401,7 @@ var a:never;
 
 
   ```
+
   ```html
   <!-- 模式1案例 -->
   <script setup>
@@ -425,6 +432,7 @@ var a:never;
   </template>
   
   ```
+
   ```html
   <!-- 模式2案例 -->
     <script>
@@ -446,7 +454,7 @@ var a:never;
           return {a}
         },
       }
-    </script>	
+    </script>
 
     <template>
       <div>
@@ -458,9 +466,7 @@ var a:never;
       </div>
     </template>
   ```
-   
 
-  
 - 组件传参（slot传参,只能单向传递）
 
   ```html
@@ -479,16 +485,3 @@ var a:never;
       <slot/>
     </template>
   ```
-
-
-
-
-
-
-
-
-
-
-
-
-
