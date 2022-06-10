@@ -1,6 +1,6 @@
 <script setup lang="ts">
 var d = 0
-var d_list = []
+var d_list: string = []
 var t = setInterval(() => {
   d++
   document.querySelector("h1").innerHTML = '第' + d + '天'
@@ -55,3 +55,16 @@ var fn = function () {
 <template>
   <div class="container"></div>
 </template>
+
+<!--  
+模拟经营系统 
+选址 -> 建设 -> 生产 -> 出售 -> 售后 -> 结算
+                |       |
+                |<------|
+
+经营品类 + 消费对象 + 投入成本 => 系统规模
+
+B端<成本>
+C端<流量 | 折损>
+
+-->
