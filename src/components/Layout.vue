@@ -1,6 +1,7 @@
 <template>
   <div>
     <HelloWorldVue msg="hello" />
+    <router-view></router-view>
   </div>
 </template>
 <script setup lang="ts">
