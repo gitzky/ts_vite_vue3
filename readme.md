@@ -86,7 +86,7 @@ function loop():never {
 
 ```cmd
 yarn create vite   #默认创建
-yarn create vite app_name --template vue   #指定项目名称和项目类型（vue、vue-ts、react等）
+yarn create vite app_name --template vue-ts   #指定项目名称和项目类型（vue、vue-ts、react等）
 
 cd app_name  #进入根目录
 npm install  #安装依赖
