@@ -80,6 +80,54 @@ function loop():never {
 }
 ```
 
+九、泛型 < T >
+
+- 泛型是什么
+
+```js
+  //示例：
+  function identity<T>(value:T):T => value ? value : 0
+  const num1:number = identity<Number>(1)  // 1
+
+  // 示例2：
+  function identity<T,U>(value:T,msg:U):T {
+    console.log(msg)    
+    return !!value
+  }
+  identity<Number,String>(123,'hello 123')
+  // 示例3：
+  function identity<T,U>(value:T,msg:U) : [T,U] {
+    console.log([value,msg])
+    return [value,msg]
+  }
+  identity(1,'hello')
+```
+
+- 泛型接口
+
+```js
+  interface Ide<V,M> {
+    value:V,
+    msg:M
+  }
+  function identity<T,U>(value:T,msg:U) : Ide<T,U> {
+    console.log(value+":"+typeof(value))
+    console.log(msg+":"+typeof(msg))
+    let res:Ide<T,U> = {
+      value,
+      msg
+    }
+    return res;
+  }
+  console.log( identity(1,"hello") ) 
+  /*
+    1:Number
+    hello:String
+    {value:1,msg:'hello'}
+  */
+```
+
+
 ## vite构建工具
 
 一、 创建一个vite项目
@@ -959,3 +1007,16 @@ export default defineComponent({
 ```
 
 - typescript emits
+
+```html
+<script setup lang="ts">
+// runtime
+const emit = defineEmits(['change', 'update'])
+
+// type-based
+const emit = defineEmits<{
+  (e: 'change', id: number): void
+  (e: 'update', value: string): void
+}>()
+</script>
+```
