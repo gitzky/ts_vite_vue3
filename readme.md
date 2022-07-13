@@ -80,11 +80,75 @@ function loop():never {
 }
 ```
 
-九、泛型 < T >
+九、类型断言
+
+- as 操作符  ( 值 as 类型 )
+
+```ts
+interface Person = {name:string,age:number,say:function():void{console.log('hello')}}  
+const p1 = {} as Person //p1.name ...
+
+// 或...
+type Person = {
+  name:string,
+  age:number,
+  say:()=>:void{
+    console.log('hello')
+  }
+}
+const p2 = {} as Person // p2.say() 
+
+```
+
+- typeof 操作符 ( type 变量 = typeof 常量 )
+
+```ts
+  const P3 = {name:'zhangsan',age:18}
+  type Person = typeof P3
+  function fn (params:Person):void{
+   // params.name
+  }
+  fn(P3) 
+```
+
+- keyof 操作符 ( type 类型 keyof 类型  )
+
+```ts
+  type Person = {
+    name:string,
+    age:number
+  } 
+  type p = keyof Person
+  
+  // 或
+  type p = keyof {name:'zhangsan',age:18}
+
+  // 使用
+  type T = keyof {a:1,b:2} == type T = 'a|b'
+
+  let t:T = 'a'|'b' // 变量的取值只能是 a或b
+
+  let a:T = '' // 报错：不能将类型“""”分配给类型为 “"a"|"b"”。
+
+```
+
+- keyof typeof 组合 (keyof typeof 常量或变量)
+
+```ts
+const T = {
+  key1: "string",
+  key2: 'number'
+}
+
+let t: keyof typeof T = 'key1'
+
+```
+
+十、泛型 < T >
 
 - 泛型是什么
 
-```js
+```ts
   //示例：
   function identity<T>(value:T):T => value ? value : 0
   const num1:number = identity<Number>(1)  // 1
