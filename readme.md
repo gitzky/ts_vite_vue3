@@ -895,6 +895,24 @@ npm run dev | npx vite | npx vite --port 8080 指定启动app的端口  #运行a
 
   ```
 
+#### Suspense异步组件  efault和fallback
+
+```html
+  <!-- 加载完异步内容时显示默认插槽，并将fallback插槽用作加载状态 -->
+  <tempalte>
+   <suspense>
+     <template #default>
+       <todo-list />
+     </template>
+     <template #fallback>
+       <div>
+         Loading...
+       </div>
+     </template>
+   </suspense>
+</template>
+```
+
 #### 内置组件
 
 - transition过渡
