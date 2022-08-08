@@ -191,6 +191,136 @@ let t: keyof typeof T = 'key1'
   */
 ```
 
+十一、 type 类型别名 和 interface 的区别
+
+- type: 给一个类型起一个别名，定义于 基础类型、联合类型或元组（非对象类型）
+
+```ts
+  type num = number
+  type str = string|number
+  type bool = boolean
+  type text = [string,number]
+  type cb = (data:string)=>void
+  type required<T> = {
+    [K in keyof T]?: T[K]
+  }
+```
+
+- interface 接口 只能用于定义 对象类型
+
+```ts
+  // vue3 的App对象定义
+  export interface App<HostElement = any> {
+    version:string,
+    config:AppConfig,
+    ...
+  }
+```
+
+- type 和 interface 的相同用法
+
+  - 都能用于描述对象和函数的类型
+
+  ```ts
+    //type
+    type Point = {
+      x:number,
+      y:number
+    }
+    type setPoint = (x:number,y:number)=>void
+    
+    // interface
+    interface Point {
+      x:number,
+      y:number
+    }
+    interface setPoint {
+      (x:number,y:number)=>void
+    }
+  ```
+
+  - 都支持扩展
+  
+  ```ts
+    // type类型别名通过 & 运算符扩展
+    type Person = {
+      name:string
+    }
+
+    type Yuan = Person & {
+      age:number
+    }
+
+    // interface通过extends扩展
+    interface Person {
+      name:string
+    }
+
+    interface Yuan extends Person {
+      age:number
+    }
+
+    // type 类型别名通过 & 运算符扩展 interface
+    interface Person {
+      name:number
+    }
+
+    type Yuan = Person & {
+      age:number
+    }
+
+    // interface 通过extends 扩展type
+    type Person = {
+      name:string
+    }
+
+    interface Yuan extends Person {
+      age:number
+    }
+
+  ```
+
+- type 和 interface 的不同之处
+
+  - type类型别名可为基础类型、联合类型和元组类型定义别名，interface接口不能
+
+  ```ts
+    type num = number
+
+    type strAndNum = string | number
+    
+    type text = [number,string]
+    
+  ```
+  
+  - 同名的interface接口自动合并，同名的type别名会冲突
+
+  ```ts
+    type a = string
+    type a = number //报错
+
+    interface a = {
+      name:string
+    }
+    interface a = {
+      age:number
+    }
+
+    let A:a = {
+      name:'hahaha',
+      age:18
+    }
+
+    // 利用interface接口同名合并的特性，可以扩展一些定义好的接口类型
+    // 例如：
+    import { ProtocolWithReturn } from "webext-bridge"
+    declare module 'webext-bridge' {
+      export interface ProtocolMap {
+        foo:{title:string},
+        bar:ProtocolWithReturn<CustomDataType,CustomReturnType>
+      }
+    }
+  ```
 
 ## vite构建工具
 
